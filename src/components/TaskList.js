@@ -15,7 +15,7 @@ function TaskList() {
   }, []);
 
   const fetchTasks = () => {
-    fetch("http://localhost:8000/tasks/")
+    fetch("https://smart-task-tracker-backend-production.up.railway.app/tasks/")
       .then((res) => res.json())
       .then((data) => {
         setTasks(data);
@@ -25,7 +25,7 @@ function TaskList() {
   };
 
   const fetchSummary = () => {
-    fetch("http://localhost:8000/tasks/summary")
+    fetch("https://smart-task-tracker-backend-production.up.railway.app/tasks/summary")
       .then((res) => res.json())
       .then((data) => setSummary(data))
       .catch(() => setError("Failed to fetch summary."));
@@ -33,7 +33,7 @@ function TaskList() {
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this task?")) {
-      fetch(`http://localhost:8000/tasks/${id}`, {
+      fetch(`https://smart-task-tracker-backend-production.up.railway.app/tasks/${id}`, {
         method: "DELETE",
       })
         .then(() => {
@@ -45,7 +45,7 @@ function TaskList() {
   };
 
   const handleToggleComplete = (task) => {
-    fetch(`http://localhost:8000/tasks/${task.id}`, {
+    fetch(`https://smart-task-tracker-backend-production.up.railway.app/tasks/${task.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
