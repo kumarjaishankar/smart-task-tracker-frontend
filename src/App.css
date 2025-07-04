@@ -1,0 +1,7 @@
+body {
+  min-height: 100vh;
+}
+.task-title-done {
+  text-decoration: line-through;
+  color: #888;
+}
