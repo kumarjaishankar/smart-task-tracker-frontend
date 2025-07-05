@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Label } from "./ui/label";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, Sparkles, Lightbulb, Clock, Target } from "lucide-react";
 
 /**
  * @typedef {Object} Task
@@ -30,12 +30,25 @@ import { ArrowLeft, Save } from "lucide-react";
  * @property {() => void} onCancel
  */
 
+/**
+ * @typedef {Object} AISuggestions
+ * @property {string} enhanced_title
+ * @property {string} suggested_category
+ * @property {string} suggested_priority
+ * @property {number} estimated_time
+ * @property {string[]} task_breakdown
+ * @property {string} ai_insights
+ */
+
 const TaskForm = ({ task, onSave, onCancel }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [priority, setPriority] = useState("Medium");
   const [errors, setErrors] = useState({});
+  const [aiSuggestions, setAiSuggestions] = useState(null);
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
+  const [showAISuggestions, setShowAISuggestions] = useState(false);
 
   useEffect(() => {
     if (task) {
@@ -45,6 +58,43 @@ const TaskForm = ({ task, onSave, onCancel }) => {
       setPriority(task.priority);
     }
   }, [task]);
+
+  const getAISuggestions = async () => {
+    if (!title.trim()) {
+      setErrors({ ...errors, title: "Please enter a title to get AI suggestions" });
+      return;
+    }
+
+    setIsLoadingAI(true);
+    try {
+      const response = await fetch("https://smart-task-tracker-backend-production.up.railway.app/ai/enhance-task", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, description }),
+      });
+      
+      if (response.ok) {
+        const suggestions = await response.json();
+        setAiSuggestions(suggestions);
+        setShowAISuggestions(true);
+      } else {
+        console.error("Failed to get AI suggestions");
+      }
+    } catch (error) {
+      console.error("Error getting AI suggestions:", error);
+    } finally {
+      setIsLoadingAI(false);
+    }
+  };
+
+  const applyAISuggestions = () => {
+    if (aiSuggestions) {
+      setTitle(aiSuggestions.enhanced_title);
+      setCategory(aiSuggestions.suggested_category);
+      setPriority(aiSuggestions.suggested_priority);
+      setShowAISuggestions(false);
+    }
+  };
 
   const validateForm = () => {
     const newErrors = {};
@@ -106,15 +156,31 @@ const TaskForm = ({ task, onSave, onCancel }) => {
             <Label htmlFor="title" className="text-sm font-medium text-gray-700">
               Task Title <span className="text-red-500">*</span>
             </Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter task title..."
-              className={`mt-1 w-full rounded-full pl-6 text-center border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition text-base ${errors.title ? 'border-red-300 focus:border-red-500' : ''}`}
-            />
+            <div className="relative">
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Enter task title..."
+                className={`mt-1 w-full rounded-full pl-6 text-center border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition text-base ${errors.title ? 'border-red-300 focus:border-red-500' : ''}`}
+              />
+              <Button
+                type="button"
+                onClick={getAISuggestions}
+                disabled={isLoadingAI || !title.trim()}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 transition-all"
+                size="sm"
+              >
+                {isLoadingAI ? (
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                ) : (
+                  <Sparkles className="w-4 h-4" />
+                )}
+              </Button>
+            </div>
             {errors.title && <p className="text-xs text-red-600 mt-1">{errors.title}</p>}
           </div>
+          
           <div>
             <Label htmlFor="description" className="text-sm font-medium text-gray-700">
               Description
@@ -127,6 +193,7 @@ const TaskForm = ({ task, onSave, onCancel }) => {
               className="mt-1 w-full rounded-full pl-6 text-center border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition text-base min-h-[90px] resize-none"
             />
           </div>
+          
           <div>
             <Label htmlFor="category" className="text-sm font-medium text-gray-700">
               Category <span className="text-red-500">*</span>
@@ -140,6 +207,7 @@ const TaskForm = ({ task, onSave, onCancel }) => {
             />
             {errors.category && <p className="text-xs text-red-600 mt-1">{errors.category}</p>}
           </div>
+          
           <div>
             <Label className="text-sm font-medium text-gray-700">Priority</Label>
             <Select value={priority} onValueChange={handlePriorityChange}>
@@ -153,6 +221,63 @@ const TaskForm = ({ task, onSave, onCancel }) => {
               </SelectContent>
             </Select>
           </div>
+
+          {/* AI Suggestions Panel */}
+          {showAISuggestions && aiSuggestions && (
+            <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-xl p-4 space-y-3">
+              <div className="flex items-center gap-2 text-purple-700 font-semibold">
+                <Lightbulb className="w-5 h-5" />
+                AI Suggestions
+              </div>
+              
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <Target className="w-4 h-4 text-blue-500" />
+                  <span className="font-medium">Enhanced Title:</span>
+                  <span className="text-gray-700">{aiSuggestions.enhanced_title}</span>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded-full bg-green-100 flex items-center justify-center">
+                    <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                  </div>
+                  <span className="font-medium">Suggested Category:</span>
+                  <span className="text-gray-700">{aiSuggestions.suggested_category}</span>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-orange-500" />
+                  <span className="font-medium">Estimated Time:</span>
+                  <span className="text-gray-700">{aiSuggestions.estimated_time} hour(s)</span>
+                </div>
+                
+                {aiSuggestions.ai_insights && (
+                  <div className="bg-white/50 rounded-lg p-2 text-xs text-gray-600">
+                    💡 {aiSuggestions.ai_insights}
+                  </div>
+                )}
+              </div>
+              
+              <div className="flex gap-2 pt-2">
+                <Button
+                  type="button"
+                  onClick={applyAISuggestions}
+                  className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm py-2 rounded-lg hover:from-purple-600 hover:to-pink-600"
+                >
+                  Apply Suggestions
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => setShowAISuggestions(false)}
+                  variant="outline"
+                  className="text-sm py-2 rounded-lg"
+                >
+                  Dismiss
+                </Button>
+              </div>
+            </div>
+          )}
+
           <div className="flex flex-col gap-3 pt-2">
             <Button
               type="submit"

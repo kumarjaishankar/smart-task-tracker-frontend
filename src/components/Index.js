@@ -3,9 +3,11 @@ import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Checkbox } from "../components/ui/checkbox";
-import { Plus, Edit, Trash2, CheckCircle2, X } from "lucide-react";
+import { Plus, Edit, Trash2, CheckCircle2, X, Brain, Lightbulb, AlertTriangle, Sparkles } from "lucide-react";
 import TaskForm from "./TaskForm";
 import TaskSummary from "./TaskSummary";
+import AIInsights from "./AIInsights";
+import SmartSuggestions from "./SmartSuggestions";
 
 /**
  * @typedef {Object} Task
@@ -32,6 +34,12 @@ const Index = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
   const [showError, setShowError] = useState(true);
+  const [showAIInsights, setShowAIInsights] = useState(false);
+  const [showSmartSuggestions, setShowSmartSuggestions] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState(null);
+  const [showEditConfirm, setShowEditConfirm] = useState(false);
+  const [taskToEdit, setTaskToEdit] = useState(null);
 
   useEffect(() => {
     fetchTasks();
@@ -70,6 +78,50 @@ const Index = () => {
         })
         .catch(() => setError("Failed to delete task."));
     }
+  };
+
+  const handleDeleteClick = (task) => {
+    setTaskToDelete(task);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = () => {
+    if (taskToDelete) {
+      fetch(`https://smart-task-tracker-backend-production.up.railway.app/tasks/${taskToDelete.id}`, {
+        method: "DELETE",
+      })
+        .then(() => {
+          fetchTasks();
+          fetchSummary();
+          setShowDeleteConfirm(false);
+          setTaskToDelete(null);
+        })
+        .catch(() => setError("Failed to delete task."));
+    }
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteConfirm(false);
+    setTaskToDelete(null);
+  };
+
+  const handleEditClick = (task) => {
+    setTaskToEdit(task);
+    setShowEditConfirm(true);
+  };
+
+  const confirmEdit = () => {
+    if (taskToEdit) {
+      setEditingTask(taskToEdit);
+      setShowForm(true);
+      setShowEditConfirm(false);
+      setTaskToEdit(null);
+    }
+  };
+
+  const cancelEdit = () => {
+    setShowEditConfirm(false);
+    setTaskToEdit(null);
   };
 
   const handleToggleComplete = (task) => {
@@ -169,8 +221,96 @@ const Index = () => {
 
   return (
     <div className="min-h-screen w-full bg-white relative overflow-x-hidden">
-      {/* Floating Add Task Button */}
-      <div className="absolute top-8 right-12 z-20">
+      {/* Custom Delete Confirmation Modal */}
+      {showDeleteConfirm && taskToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 rounded-full bg-red-100">
+                <AlertTriangle className="w-6 h-6 text-red-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Delete Task</h3>
+            </div>
+            
+            {!taskToDelete.completed && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+                <p className="text-red-600 font-medium text-sm">
+                  Task is not yet completed
+                </p>
+              </div>
+            )}
+            
+            <p className="text-gray-700 mb-6">
+              Are you sure you want to delete "{taskToDelete.title}"?
+            </p>
+            
+            <div className="flex gap-3 justify-end">
+              <Button
+                onClick={cancelDelete}
+                variant="outline"
+                className="px-4 py-2"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white"
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Edit Confirmation Modal */}
+      {showEditConfirm && taskToEdit && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 rounded-full bg-blue-100">
+                <Sparkles className="w-6 h-6 text-blue-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Edit Task</h3>
+            </div>
+            
+            <p className="text-gray-700 mb-6">
+              Ready to make this task even better? ✨
+            </p>
+            
+            <div className="flex gap-3 justify-end">
+              <Button
+                onClick={cancelEdit}
+                variant="outline"
+                className="px-4 py-2"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={confirmEdit}
+                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white"
+              >
+                Edit
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Floating Action Buttons */}
+      <div className="absolute top-8 right-12 z-20 flex gap-3">
+        <Button
+          onClick={() => setShowSmartSuggestions(!showSmartSuggestions)}
+          className="flex items-center gap-2 px-6 py-3 rounded-full shadow-lg bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold text-base transition-all duration-200 hover:from-green-600 hover:to-emerald-600 focus:outline-none"
+        >
+          <Lightbulb className="w-5 h-5" /> Smart Tips
+        </Button>
+        <Button
+          onClick={() => setShowAIInsights(!showAIInsights)}
+          className="flex items-center gap-2 px-6 py-3 rounded-full shadow-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-base transition-all duration-200 hover:from-purple-600 hover:to-pink-600 focus:outline-none"
+        >
+          <Brain className="w-5 h-5" /> AI Insights
+        </Button>
         <Button
           onClick={() => setShowForm(true)}
           className="flex items-center gap-2 px-8 py-3 rounded-full shadow-lg bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-bold text-lg transition-all duration-200 hover:from-blue-600 hover:to-indigo-600 focus:outline-none"
@@ -190,6 +330,12 @@ const Index = () => {
 
         {/* Summary */}
         <TaskSummary summary={summary} />
+
+        {/* AI Insights */}
+        {showAIInsights && <AIInsights />}
+
+        {/* Smart Suggestions */}
+        {showSmartSuggestions && <SmartSuggestions onAddTask={handleTaskSave} />}
 
         {/* Tasks */}
         {showError && error && (
@@ -245,10 +391,7 @@ const Index = () => {
                   </div>
                   <div className="flex gap-2 items-center">
                     <button
-                      onClick={() => {
-                        setEditingTask(task);
-                        setShowForm(true);
-                      }}
+                      onClick={() => handleEditClick(task)}
                       disabled={showForm}
                       aria-label="Edit Task"
                       className="p-2 rounded-full hover:bg-blue-100 transition flex items-center justify-center focus:outline-none"
@@ -257,7 +400,7 @@ const Index = () => {
                       <Edit className="w-5 h-5 text-blue-500" />
                     </button>
                     <button
-                      onClick={() => handleDelete(task.id)}
+                      onClick={() => handleDeleteClick(task)}
                       disabled={showForm}
                       aria-label="Delete Task"
                       className="p-2 rounded-full hover:bg-red-100 transition flex items-center justify-center focus:outline-none"
