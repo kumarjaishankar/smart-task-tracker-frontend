@@ -1,5 +1,5 @@
 # Smart Task Tracker – Frontend
-A React-based frontend for the Smart Task Tracker app, featuring AI-powered UI components and modern task management interface.
+A React-based frontend for the Smart Task Tracker app, featuring AI-powered UI components, robust offline intelligence fallback, and a modern task management interface.
 
 ## 🚀 Live Demo
 Frontend: https://smart-task-tracker-frontend.vercel.app
@@ -27,6 +27,7 @@ The app will run at http://localhost:3000.
 - Real-time productivity analytics
 - Interactive category and priority management
 - Persistent storage via backend API
+- **Robust Offline Intelligence:** Seamless AI fallback when cloud APIs are unavailable
 
 ## 🎨 UI Components
 ### Core Components
@@ -56,6 +57,7 @@ The app will run at http://localhost:3000.
 - Priority Assessment: AI-recommended priority levels
 - Time Estimation: Suggested completion times
 - Task Breakdown: AI-suggested subtasks
+- **Offline AI Fallback:** If the cloud AI API is unavailable, the app automatically uses the local backend's enhanced offline intelligence for suggestions and insights.
 
 ### Productivity Analytics
 - Completion Rate Analysis: Real-time productivity metrics
@@ -63,6 +65,9 @@ The app will run at http://localhost:3000.
 - Priority Analysis: Priority management patterns
 - Smart Recommendations: Personalized productivity tips
 - Productivity Score: Overall productivity rating
+
+## 🛰️ Offline AI Fallback
+If the cloud AI API is unavailable (due to network issues or server downtime), the frontend will automatically use the local backend's enhanced offline intelligence system. Users will see an "Offline Intelligence Active" badge when this fallback is in use, ensuring uninterrupted smart suggestions and productivity insights.
 
 ## 📂 Repository
 [Frontend GitHub Repo](https://github.com/kumarjaishankar/smart-task-tracker-frontend)

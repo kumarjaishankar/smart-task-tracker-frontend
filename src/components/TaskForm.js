@@ -49,6 +49,7 @@ const TaskForm = ({ task, onSave, onCancel }) => {
   const [aiSuggestions, setAiSuggestions] = useState(null);
   const [isLoadingAI, setIsLoadingAI] = useState(false);
   const [showAISuggestions, setShowAISuggestions] = useState(false);
+  const [offlineAI, setOfflineAI] = useState(false);
 
   useEffect(() => {
     if (task) {
@@ -66,6 +67,7 @@ const TaskForm = ({ task, onSave, onCancel }) => {
     }
 
     setIsLoadingAI(true);
+    setOfflineAI(false);
     try {
       const response = await fetch("https://smart-task-tracker-backend-production.up.railway.app/ai/enhance-task", {
         method: "POST",
@@ -78,10 +80,40 @@ const TaskForm = ({ task, onSave, onCancel }) => {
         setAiSuggestions(suggestions);
         setShowAISuggestions(true);
       } else {
-        console.error("Failed to get AI suggestions");
+        // Fallback to offline intelligence
+        const offlineResponse = await fetch("http://localhost:8000/ai/offline-enhance", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, description }),
+        });
+        if (offlineResponse.ok) {
+          const suggestions = await offlineResponse.json();
+          setAiSuggestions(suggestions);
+          setShowAISuggestions(true);
+          setOfflineAI(true);
+        } else {
+          console.error("Failed to get AI suggestions (offline fallback also failed)");
+        }
       }
     } catch (error) {
-      console.error("Error getting AI suggestions:", error);
+      // Fallback to offline intelligence on network error
+      try {
+        const offlineResponse = await fetch("http://localhost:8000/ai/offline-enhance", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, description }),
+        });
+        if (offlineResponse.ok) {
+          const suggestions = await offlineResponse.json();
+          setAiSuggestions(suggestions);
+          setShowAISuggestions(true);
+          setOfflineAI(true);
+        } else {
+          console.error("Failed to get AI suggestions (offline fallback also failed)");
+        }
+      } catch (offlineError) {
+        console.error("Error getting AI suggestions (offline fallback):", offlineError);
+      }
     } finally {
       setIsLoadingAI(false);
     }
@@ -228,6 +260,9 @@ const TaskForm = ({ task, onSave, onCancel }) => {
               <div className="flex items-center gap-2 text-purple-700 font-semibold">
                 <Lightbulb className="w-5 h-5" />
                 AI Suggestions
+                {offlineAI && (
+                  <span className="ml-2 px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 text-xs font-semibold border border-yellow-300">Offline Intelligence Active</span>
+                )}
               </div>
               
               <div className="space-y-2 text-sm">
