@@ -1,6 +1,6 @@
 # Smart Task Tracker – Frontend
 
-A modern, responsive task tracking app built with React and Create React App.
+A modern, responsive task tracking app built with React and Create React App, featuring AI-powered UI components for enhanced productivity.
 
 ---
 
@@ -40,9 +40,36 @@ npm start
 
 - Add, edit, and delete tasks
 - Task summary and filtering
-- Responsive, clean UI
+- Responsive, clean UI with Tailwind CSS
+- **AI-powered productivity insights dashboard**
+- **Smart task suggestions with one-click add**
+- **Real-time productivity analytics**
+- **Interactive category and priority management**
 - Persistent storage via backend API
-- [Add any AI/extra features if you have them]
+
+---
+
+## 🎨 UI Components
+
+### Core Components
+- **TaskList:** Main task management interface
+- **TaskForm:** Add/edit task modal with smart defaults
+- **TaskSummary:** Real-time task statistics
+- **Index:** Main dashboard with AI features
+
+### AI-Powered UI Components
+- **AIInsights:** Productivity analytics dashboard with:
+  - Productivity score visualization
+  - Category distribution charts
+  - Priority analysis
+  - Smart recommendations
+  - Completion rate tracking
+
+- **SmartSuggestions:** Intelligent task suggestions with:
+  - Context-aware task recommendations
+  - One-click task creation
+  - Category and priority suggestions
+  - Productivity tips and insights
 
 ---
 
@@ -55,3 +82,5 @@ npm start
 ## 📄 Project Documentation
 
 - See the backend repo for API documentation and architecture.
+- UI components use Tailwind CSS for styling
+- AI features integrate with backend analytics endpoints

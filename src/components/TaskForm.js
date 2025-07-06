@@ -168,7 +168,7 @@ const TaskForm = ({ task, onSave, onCancel }) => {
                 type="button"
                 onClick={getAISuggestions}
                 disabled={isLoadingAI || !title.trim()}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 transition-all"
+                className="absolute right-0 top-0 bottom-0 my-auto p-1 h-8 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 transition-all"
                 size="sm"
               >
                 {isLoadingAI ? (

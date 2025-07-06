@@ -300,13 +300,19 @@ const Index = () => {
       {/* Floating Action Buttons */}
       <div className="absolute top-8 right-12 z-20 flex gap-3">
         <Button
-          onClick={() => setShowSmartSuggestions(!showSmartSuggestions)}
+          onClick={() => {
+            setShowSmartSuggestions(!showSmartSuggestions);
+            setShowAIInsights(false); // Close AI Insights when opening Smart Tips
+          }}
           className="flex items-center gap-2 px-6 py-3 rounded-full shadow-lg bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold text-base transition-all duration-200 hover:from-green-600 hover:to-emerald-600 focus:outline-none"
         >
           <Lightbulb className="w-5 h-5" /> Smart Tips
         </Button>
         <Button
-          onClick={() => setShowAIInsights(!showAIInsights)}
+          onClick={() => {
+            setShowAIInsights(!showAIInsights);
+            setShowSmartSuggestions(false); // Close Smart Tips when opening AI Insights
+          }}
           className="flex items-center gap-2 px-6 py-3 rounded-full shadow-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-base transition-all duration-200 hover:from-purple-600 hover:to-pink-600 focus:outline-none"
         >
           <Brain className="w-5 h-5" /> AI Insights
