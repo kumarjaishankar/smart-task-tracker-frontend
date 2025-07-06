@@ -1,56 +1,34 @@
 # Smart Task Tracker – Frontend
-
-A modern, responsive task tracking app built with React and Create React App, featuring AI-powered UI components for enhanced productivity.
-
----
+A React-based frontend for the Smart Task Tracker app, featuring AI-powered UI components and modern task management interface.
 
 ## 🚀 Live Demo
-
-- **Frontend:** [https://smart-task-tracker-frontend.vercel.app](https://smart-task-tracker-frontend.vercel.app)
-- **Backend API:** [https://smart-task-tracker-backend-production.up.railway.app](https://smart-task-tracker-backend-production.up.railway.app)
-
----
+Frontend: https://smart-task-tracker-frontend.vercel.app
 
 ## 🛠️ Setup Steps
-
 ### Prerequisites
-
 - Node.js & npm
 - Git
 
 ### Local Setup
-
 ```bash
 git clone https://github.com/kumarjaishankar/smart-task-tracker-frontend.git
 cd smart-task-tracker-frontend
 npm install
 npm start
 ```
-
-> The app will run at [http://localhost:3000](http://localhost:3000).
-
-### API Configuration
-
-- By default, the frontend expects the backend API at `/tasks` to be available at the backend URL.
-- If running locally, update the API URL in your code or via an `.env` file to point to your backend (e.g., `http://localhost:8000`).
-
----
+The app will run at http://localhost:3000.
 
 ## ✨ Features
-
-- Add, edit, and delete tasks
+- Create, edit, and delete tasks
 - Task summary and filtering
 - Responsive, clean UI with Tailwind CSS
-- **AI-powered productivity insights dashboard**
-- **Smart task suggestions with one-click add**
-- **Real-time productivity analytics**
-- **Interactive category and priority management**
+- AI-powered productivity insights dashboard
+- Smart task suggestions with one-click add
+- Real-time productivity analytics
+- Interactive category and priority management
 - Persistent storage via backend API
 
----
-
 ## 🎨 UI Components
-
 ### Core Components
 - **TaskList:** Main task management interface
 - **TaskForm:** Add/edit task modal with smart defaults
@@ -71,16 +49,36 @@ npm start
   - Category and priority suggestions
   - Productivity tips and insights
 
----
+## 🤖 AI Integration Features
+### Task Management
+- Smart Task Creation: AI-suggested task titles and descriptions
+- Category Detection: Automatic task categorization
+- Priority Assessment: AI-recommended priority levels
+- Time Estimation: Suggested completion times
+- Task Breakdown: AI-suggested subtasks
+
+### Productivity Analytics
+- Completion Rate Analysis: Real-time productivity metrics
+- Category Distribution: Visual category focus analysis
+- Priority Analysis: Priority management patterns
+- Smart Recommendations: Personalized productivity tips
+- Productivity Score: Overall productivity rating
 
 ## 📂 Repository
+[Frontend GitHub Repo](https://github.com/kumarjaishankar/smart-task-tracker-frontend)
 
-- [Frontend GitHub Repo](https://github.com/kumarjaishankar/smart-task-tracker-frontend)
+## 🏗️ Project Structure
+- `src/components/` – React components
+- `src/components/ui/` – Reusable UI components
+- `src/App.js` – Main application component
+- `package.json` – Node.js dependencies
+- `tailwind.config.js` – Tailwind CSS configuration
 
----
+## 📝 Documentation
+- UI Components: Built with React and Tailwind CSS
+- State Management: React Hooks for local state
+- API Integration: RESTful API calls to backend
+- Deployment: Vercel for frontend hosting
 
-## 📄 Project Documentation
-
-- See the backend repo for API documentation and architecture.
-- UI components use Tailwind CSS for styling
-- AI features integrate with backend analytics endpoints
+## 🌐 Deployment
+Deployed on Vercel: https://smart-task-tracker-frontend.vercel.app
