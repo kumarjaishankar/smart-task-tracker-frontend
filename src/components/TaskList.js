@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import '../App.css'; // Import custom styles
+import { Checkbox } from "./ui/checkbox";
+import { Badge } from "./ui/badge";
 // import { FaEdit, FaTrash } from "react-icons/fa"; // Uncomment if using react-icons
 
 function TaskList() {
@@ -67,48 +69,55 @@ function TaskList() {
   if (loading) return <div className="container mt-5">Loading...</div>;
   if (error) return <div className="container mt-5 text-danger">{error}</div>;
 
+  // Priority color mapping
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case "High": return "red";
+      case "Medium": return "yellow";
+      case "Low": return "green";
+      default: return "info";
+    }
+  };
+
   return (
-    <div className="container mt-5">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Smart Task Tracker</h2>
-        <Link to="/create" className="btn btn-primary">
-          + Add Task
-        </Link>
+    <div className="max-w-2xl mx-auto mt-10 px-2">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-900">Smart Task Tracker</h2>
+        <Link to="/create" className="rounded-full bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 text-sm font-semibold shadow-md transition-all">+ Add Task</Link>
       </div>
-      <div className="mb-3">
-        <strong>Total:</strong> {summary.total} | <strong>Completed:</strong> {summary.completed} | <strong>% Completed:</strong> {(summary.percent_completed ?? 0).toFixed(1)}%
+      <div className="mb-4 text-sm text-gray-700 flex gap-4">
+        <span><strong>Total:</strong> {summary.total}</span>
+        <span><strong>Completed:</strong> {summary.completed}</span>
+        <span><strong>% Completed:</strong> {(summary.percent_completed ?? 0).toFixed(1)}%</span>
       </div>
       {tasks.length === 0 ? (
-        <div className="alert alert-info">No tasks found. Add your first task!</div>
+        <div className="bg-blue-50 border border-blue-100 text-blue-700 rounded-xl px-4 py-3 text-center">No tasks found. Add your first task!</div>
       ) : (
-        <ul className="list-group">
+        <ul className="space-y-3">
           {tasks.map((task) => (
             <li
               key={task.id}
-              className="list-group-item d-flex align-items-center justify-content-between"
+              className="flex items-center justify-between bg-white rounded-xl shadow p-4 gap-4"
             >
-              <div>
-                <input
-                  type="checkbox"
+              <div className="flex items-center gap-3 min-w-0">
+                <Checkbox
                   checked={task.completed}
-                  onChange={() => handleToggleComplete(task)}
-                  className="form-check-input me-2"
+                  onCheckedChange={() => handleToggleComplete(task)}
+                  className="relative"
                 />
-                <span className={task.completed ? "task-title-done" : ""}>
-                  <strong>{task.title}</strong>
+                <span className={`truncate ${task.completed ? "line-through text-gray-400" : "text-gray-900"} font-medium text-base`}>
+                  {task.title}
                 </span>
-                <span className="badge bg-secondary ms-2">{task.category || "None"}</span>
-                <span className="badge bg-info ms-2">{task.priority}</span>
+                <Badge color="secondary" className="ml-2">{task.category || "None"}</Badge>
+                <Badge color={getPriorityColor(task.priority)} className="ml-2">{task.priority}</Badge>
               </div>
-              <div>
-                <Link to={`/edit/${task.id}`} className="btn btn-sm btn-outline-primary me-2">
-                  {/* <FaEdit /> */}Edit
-                </Link>
+              <div className="flex gap-2">
+                <Link to={`/edit/${task.id}`} className="rounded-full border border-blue-600 text-blue-600 hover:bg-blue-50 px-4 py-1 text-xs font-semibold transition-all">Edit</Link>
                 <button
                   onClick={() => handleDelete(task.id)}
-                  className="btn btn-sm btn-outline-danger"
+                  className="rounded-full border border-red-500 text-red-500 hover:bg-red-50 px-4 py-1 text-xs font-semibold transition-all"
                 >
-                  {/* <FaTrash /> */}Delete
+                  Delete
                 </button>
               </div>
             </li>

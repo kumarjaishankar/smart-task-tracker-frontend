@@ -12,6 +12,7 @@ import {
 } from "./ui/select";
 import { Label } from "./ui/label";
 import { ArrowLeft, Save, Sparkles, Lightbulb, Clock, Target } from "lucide-react";
+import Dropdown from "./ui/Dropdown";
 
 /**
  * @typedef {Object} Task
@@ -139,6 +140,10 @@ const TaskForm = ({ task, onSave, onCancel }) => {
       newErrors.category = "Category is required";
     }
     
+    if (!priority || priority === "") {
+      newErrors.priority = "Priority is required";
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -188,7 +193,7 @@ const TaskForm = ({ task, onSave, onCancel }) => {
             <Label htmlFor="title" className="text-sm font-medium text-gray-700">
               Task Title <span className="text-red-500">*</span>
             </Label>
-            <div className="relative">
+            <div className="relative flex items-center">
               <Input
                 id="title"
                 value={title}
@@ -196,19 +201,19 @@ const TaskForm = ({ task, onSave, onCancel }) => {
                 placeholder="Enter task title..."
                 className={`mt-1 w-full rounded-full pl-6 text-center border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition text-base ${errors.title ? 'border-red-300 focus:border-red-500' : ''}`}
               />
-              <Button
+              <button
                 type="button"
                 onClick={getAISuggestions}
                 disabled={isLoadingAI || !title.trim()}
-                className="absolute right-0 top-0 bottom-0 my-auto p-1 h-8 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 transition-all"
-                size="sm"
+                className="absolute right-0 top-1/2 -translate-y-[45%] p-0 h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:from-purple-700 hover:to-pink-600 transition-all shadow border-2 border-white disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label="Get AI Suggestions"
               >
                 {isLoadingAI ? (
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
                 ) : (
-                  <Sparkles className="w-4 h-4" />
+                  <Sparkles className="w-6 h-6" />
                 )}
-              </Button>
+              </button>
             </div>
             {errors.title && <p className="text-xs text-red-600 mt-1">{errors.title}</p>}
           </div>
@@ -241,17 +246,20 @@ const TaskForm = ({ task, onSave, onCancel }) => {
           </div>
           
           <div>
-            <Label className="text-sm font-medium text-gray-700">Priority</Label>
-            <Select value={priority} onValueChange={handlePriorityChange}>
-              <SelectTrigger className="mt-1 w-full rounded-full pl-6 text-center border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition text-base">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="rounded-full">
-                <SelectItem value="Low">Low Priority</SelectItem>
-                <SelectItem value="Medium">Medium Priority</SelectItem>
-                <SelectItem value="High">High Priority</SelectItem>
-              </SelectContent>
-            </Select>
+            <Label className="text-sm font-medium text-gray-700">Priority <span className="text-red-500">*</span></Label>
+            <Dropdown
+              value={priority}
+              onChange={handlePriorityChange}
+              options={[
+                { value: "", label: "Select priority" },
+                { value: "Low", label: "Low Priority" },
+                { value: "Medium", label: "Medium Priority" },
+                { value: "High", label: "High Priority" },
+              ]}
+              className="mt-1"
+              placeholder="Select priority"
+            />
+            {errors.priority && <p className="text-xs text-red-600 mt-1">{errors.priority}</p>}
           </div>
 
           {/* AI Suggestions Panel */}
